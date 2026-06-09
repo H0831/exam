@@ -620,7 +620,7 @@
                         <button onclick="window.setQnaFilter('사회')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">사회</button>
                         <button onclick="window.setQnaFilter('과학')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">과학</button>
                         <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">한국사</button>
-                        <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">정보</button>
+                        <button onclick="window.setQnaFilter('정보')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">정보</button>
                     </div>
                     
                     <div id="qna-list" class="space-y-3.5 min-h-[180px]"></div>
@@ -1414,7 +1414,7 @@
             });
 
             // D-Day Logic
-            const examStartDate = new Date('2026-04-27T00:00:00');
+            const examStartDate = new Date('2026-07-01T00:00:00');
             const diffDays = Math.ceil((examStartDate - new Date()) / (1000 * 60 * 60 * 24));
             const displayEl = document.getElementById('d-day-display');
             if(diffDays > 0) displayEl.innerText = `D-${diffDays}`;
@@ -1426,59 +1426,65 @@
                 {
                     id: 'korean', name: '공통국어', icon: '🍎', color: 'bg-rose-50', textColor: 'text-rose-700', borderColor: 'border-rose-100',
                     scope: [
-                        '2-(1) 수라',
-                        '2-(2) 엇박자 D', 
-                        '2-(3) 파수꾼',
-                        '1단원 소통으로 커지는 세상 + 너를 기다리는 동안',
-                        '4단원 음운 (음운의 변동 규칙 전체)'
+                        '2-(4) 선의를 믿는 것의 어려움',
+                        '3-(1) 투표를 안 해도 될까', 
+                        '3-(2) 매체가 비추는 세계',
+                        '5-(2) 공동체를 위한 글쓰기',
+                        '음운변동, 높임표현, 시제표현'
                     ],
-                    method: '음운 규칙(교체, 탈락, 축약, 첨가)을 실제 단어로 구분하며 암기하세요. 문학은 화자의 정서 변화를 "인출 학습"으로 확인하는 것이 핵심입니다.'
+                    method: '선생님의 필기, ppt, 유인물을 꼼꼼하게 보면서 내 것으로 만드세요.'
                 },
                 {
                     id: 'math', name: '공통수학', icon: '📐', color: 'bg-blue-50', textColor: 'text-blue-700', borderColor: 'border-blue-100',
                     scope: [
-                        '1단원 다항식(전체)',
-                        '2단원 방정식과 부등식',
-                        '교과서 p.10~66, p.86 1~7번 / p.134~136, p.137 8번',
-                        '연습문제(리로스쿨-활동보고서-교과활동 업로드)'
+                        'Ⅱ-3. 여러 가지 방정식과 부등식 ~ Ⅳ.행렬',
+                        '교과서 67~130p, 136~141p',
+                        '추가 문제(리로스쿨 업로드)'
                     ],
                     method: '교과서 및 추가 연습 문제를 최소 5번 반복하세요. 눈으로 풀지 마세요! 손이 기억하게 해야 합니다. 개념 정리 후 예제/유제부터 잡으세요. 틀린 문제는 오답 노트에 옮기고 "왜 이 공식을 썼는지" 설명할 수 있을 때까지 반복하세요.'
                 },
                 {
                     id: 'english', name: '공통영어', icon: '🔤', color: 'bg-amber-50', textColor: 'text-amber-700', borderColor: 'border-amber-100',
                     scope: [
-                        '교과서 2과 본문 및 whakapapa 설명 지문',
-                        '26년 고1 3월 모의고사 21번',
-                        '교과서 1과(본문, 문법), 외부지문(구글클래스룸)'
+                        'Greek Mythology Part 1,2,3 (further reading 포함)',
+                        '2026 6월 모의고사 23, 34번',
+                        '교과서 3,4과 배운 내용 전부, 2026 6월 모의고사 22번, 39번'
                     ],
                     method: '본문 통암기보다 문장 구조(문법)와 핵심 키워드 위주로 접근하세요. 수업 시간 필기 내용을 체크하고, 낯선 지문도 당황하지 않게 끊어 읽기 연습을 반복해 독해력을 높이세요.'
                 },
                 {
                     id: 'social', name: '통합사회', icon: '🌍', color: 'bg-emerald-50', textColor: 'text-emerald-700', borderColor: 'border-emerald-100',
                     scope: [
-                        '교과서 p.8~11, 18~25, 50~55, ppt(구글클래스룸)',
-                        '지도 프린트물, ppt 전체(수업시간 한부분), p.11~13, 118~122',
-                        'II. 인간, 사회, 환경과 행복',
-                        'IV-2, IV-3-1, 학습지(1~6)'
+                        '샘물T : 교과서 55~61p, 82~91p, 수업 ppt(2회고사 범위 구글 클래스룸 참조)',
+                        '선근T : 교과서 122~145p, 수업 ppt(2회고사 범위) ',
+                        '유진T : III. 자연환경과 인간 中  2. 인간과 자연의 관계, 3. 환경 문제 해결을 위한 다양한 노력 / 교과서 62~79p, ppt 자료',
+                        '벼리T : IV. 문화와 다양성 中 03-2 보편윤리, 04. 다문화 사회 단원 / 교과서 103~113쪽 / 통계 분석 추가'
                     ],
                     method: '정치/법, 지리, 윤리가 섞여 분량이 많습니다. 교과서, PPT와 학습지를 중심 뼈대로 잡으세요. 교과서 텍스트를 읽으며 핵심 개념을 흐름에 맞게 연결하는 연습이 필요합니다.'
                 },
                 {
                     id: 'science', name: '통합과학', icon: '🧪', color: 'bg-purple-50', textColor: 'text-purple-700', borderColor: 'border-purple-100',
                     scope: [
-                        '화학: 교과서 p.60~76, 프린트 p.1~2',
-                        '물리: 1단원 전체(p.12~41), 2단원 p.46~59',
-                        '생물: III-3 생명시스템 (p.142~153 / 관련문제 p.159, 160, 163)'
+                        '윤미T : 교과서 60~65, 80~81, 88~91, 93~97에서 푼 문제들',
+                        '다겸T : 3단원 1. 지구시스템 2. 역학시스템 (교과서, 프린트물 전부 다)',
+                        '보라T : 교과서 p.82~87, p.94 96,97 관련문제 / 교과서 p.154~158, p.159, 160, 163 관련문제'
                     ],
-                    method: '물리는 기본 공식의 정확한 이해와 문제 적용 연습이 필수입니다. 화학과 생물은 헷갈리기 쉬운 용어의 정의 암기를 최우선으로 하되, 그림과 표를 통해 구조화하세요.'
+                    method: '헷갈리기 쉬운 용어의 정의 암기를 최우선으로 하되, 그림과 표를 통해 구조화하세요.'
                 },
                 {
                     id: 'history', name: '한국사', icon: '📜', color: 'bg-stone-100', textColor: 'text-stone-700', borderColor: 'border-stone-200',
                     scope: [
-                        '1. 고대 국가 / 2. 고려 (p.10~31, 54~55, 64~65, 76~77, 86~88)',
-                        '한국사 배움책 주제1~주제3'
+                        '윤미T : 32~47, 68~72, 80~83, 94~95',
+                        '기범T : 배움책 주제 4~7'
                     ],
                     method: '무작정 암기보다 시대순 연표를 먼저 그리세요. 큰 흐름(인과관계)을 먼저 파악한 뒤 세부 사건을 살을 붙이듯 암기하는 것이 장기 기억에 훨씬 효과적입니다. 배움책 주제 1~3의 질문들에 대해 1분 동안 막힘없이 설명할 수 있도록 합니다.'
+                }
+                {
+                    id: 'informatics', name: '정보', icon: '🖥️', color: 'bg-stone-100', textColor: 'text-stone-700', borderColor: 'border-stone-200',
+                    scope: [
+                        '교과서 p.66~p.81, p.118~p.141 / 유인물'
+                    ],
+                    method: '교과서의 개념을 꼼꼼하게 확인하고 프로그램 코드의 의미와 원리를 숙지하세요.'
                 }
             ];
 
