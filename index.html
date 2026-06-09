@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>고1 오름이들의 중간고사 전략</title>
+    <title>1학년 8반의 기말고사 전략</title>
+    <!-- Tailwind CSS & Chart.js -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -12,19 +13,53 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #F9F9F8; 
+            background-color: #E5E7EB; /* PC 환경 배경색 */
             color: #333;
             word-break: keep-all;
             margin: 0;
             padding: 0;
-            padding-top: 3rem; /* Top bar spacing */
             line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
-        /* Top Auth Bar */
+        /* 스마트폰 시뮬레이터 레이아웃 */
+        #mobile-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #F9F9F8;
+            min-height: 100vh;
+            position: relative;
+            box-sizing: border-box;
+            padding-top: 5.75rem; /* Top Auth Bar(3rem) + Sub-Nav Bar(2.75rem) */
+            padding-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(0,0,0,0.05);
+            border-right: 1px solid rgba(0,0,0,0.05);
+        }
+
+        @media (min-width: 480px) {
+            #mobile-container {
+                margin-top: 1.5rem;
+                margin-bottom: 1.5rem;
+                border-radius: 2.5rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                overflow: hidden;
+                min-height: calc(100vh - 3rem);
+            }
+        }
+
+        /* Top Auth Bar - 스마트폰 프레임 내부 고정 */
         .top-auth-bar {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 450px;
             height: 3rem;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
@@ -33,29 +68,84 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1.5rem;
+            padding: 0 1rem;
         }
 
-        /* 섹션별 화면 채우기 */
+        @media (min-width: 480px) {
+            .top-auth-bar {
+                border-top-left-radius: 2.5rem;
+                border-top-right-radius: 2.5rem;
+                top: 1.5rem;
+            }
+        }
+
+        /* Sticky Sub-Header Navigation (가로 스크롤 메뉴) */
+        .sticky-nav-bar {
+            position: fixed;
+            top: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 450px;
+            height: 2.75rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0 0.75rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 480px) {
+            .sticky-nav-bar {
+                top: 4.5rem;
+            }
+        }
+
+        .sticky-nav-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sub-nav-btn {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6B7280;
+            background: #F3F4F6;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .sub-nav-btn.active {
+            background: #F43F5E;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(244, 63, 94, 0.2);
+        }
+
+        /* 섹션 간격 간소화 */
         .page-section {
-            min-height: 100vh;
+            min-height: auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 3rem 1.25rem;
+            padding: 2.5rem 1.25rem;
             position: relative;
             box-sizing: border-box;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background-color: #ffffff;
         }
 
         .chart-container {
             position: relative;
             width: 100%;
             margin: 0 auto;
-            height: 200px; 
+            height: 220px; 
         }
-
-        @media (min-width: 768px) { .chart-container { height: 260px; } }
 
         /* 과목 카드 독립 확장 설정 */
         .subject-card {
@@ -64,13 +154,6 @@
             -webkit-tap-highlight-color: transparent;
             height: fit-content; 
             align-self: start;
-        }
-        
-        @media (min-width: 1024px) {
-            .subject-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
-            }
         }
 
         .subject-content {
@@ -87,30 +170,10 @@
             padding-top: 1rem;
         }
 
-        .nav-dots {
-            position: fixed;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 0.7rem;
-            z-index: 50;
-        }
-        .nav-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: #D1D5DB;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .nav-dot.active { background-color: #F43F5E; transform: scale(1.3); }
-
         .sticky-note { 
             transition: all 0.2s ease; 
-            border-radius: 8px; 
-            min-height: 8rem; /* 고정 높이 해제, 유동성 부여 */
+            border-radius: 12px; 
+            min-height: 8rem;
             height: auto;
         }
         .sticky-note:hover { transform: scale(1.02) rotate(0.5deg); z-index: 10; }
@@ -128,450 +191,459 @@
 </head>
 <body class="antialiased relative">
 
-    <!-- Top Auth Bar (Google Login) -->
-    <div class="top-auth-bar">
-        <div class="font-black text-gray-800 text-xs md:text-sm tracking-tight flex items-center gap-2">
-            <span>🏫</span> 오름이들 필승 전략 대시보드
-        </div>
-        <div id="auth-container" class="flex items-center gap-3">
-            <!-- Logged Out State -->
-            <button id="btn-google-login" class="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold hover:bg-gray-50 shadow-sm transition">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-3 h-3 md:w-4 md:h-4" alt="Google"> 구글 로그인
-            </button>
-            <!-- Logged In State (Hidden by default) -->
-            <div id="user-profile" class="hidden flex items-center gap-2 md:gap-3">
-                <img id="user-avatar" src="" class="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-200">
-                <span id="user-display-name" class="text-[10px] md:text-xs font-bold text-gray-700"></span>
-                <button id="btn-logout" class="text-[9px] md:text-[10px] text-gray-400 hover:text-rose-500 font-bold underline ml-1">로그아웃</button>
-            </div>
-        </div>
-    </div>
+    <!-- 스마트폰 컨테이너 시작 -->
+    <div id="mobile-container">
 
-    <!-- Admin Password Modal -->
-    <div id="admin-modal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-transform">
-            <h3 class="font-bold text-lg mb-2 text-gray-800">관리자 권한 확인 🔒</h3>
-            <p class="text-xs text-gray-500 mb-4">해당 항목을 삭제하려면 관리자 비밀번호를 입력하세요. <br></p>
-            <input type="password" id="admin-pwd" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 outline-none focus:ring-1 focus:ring-rose-400" placeholder="비밀번호 입력">
-            <div id="admin-msg" class="hidden text-rose-500 text-[10px] font-bold mb-4"></div>
-            <div class="flex justify-end gap-2 mt-4">
-                <button id="btn-admin-cancel" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-200">취소</button>
-                <button id="btn-admin-confirm" class="px-4 py-2 bg-rose-500 text-white rounded-lg text-xs font-bold hover:bg-rose-600">삭제 확인</button>
+        <!-- Top Auth Bar (Google Login) -->
+        <div class="top-auth-bar">
+            <div class="font-black text-gray-800 text-[10px] sm:text-xs tracking-tight flex items-center gap-1.5">
+                <span>🏫</span> 1학년 8반 대시보드
             </div>
-        </div>
-    </div>
-
-    <!-- Navigation Dots -->
-    <div class="nav-dots" id="nav-dots">
-        <div class="nav-dot active" data-target="hero"></div>
-        <div class="nav-dot" data-target="subjects"></div>
-        <div class="nav-dot" data-target="schedule-niche"></div>
-        <div class="nav-dot" data-target="allday"></div>
-        <div class="nav-dot" data-target="deepwork-tools"></div>
-        <div class="nav-dot" data-target="board"></div>
-        <div class="nav-dot" data-target="qna"></div>
-        <div class="nav-dot" data-target="footer"></div>
-    </div>
-
-    <!-- Section 1: Hero -->
-    <section id="hero" class="page-section">
-        <div class="max-w-4xl mx-auto text-center px-4">
-            <div class="inline-block bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold mb-5 tracking-wider uppercase">
-                First Midterm Exam Roadmap
-            </div>
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-                오름이들의 중간고사 대비 전략<br><span class="text-rose-500">대시보드</span>
-            </h1>
-            <p class="text-sm sm:text-base md:text-lg text-gray-400 mb-10 font-medium leading-relaxed max-w-2xl mx-auto">
-                최선을 다하지도 않으면서 최고가 되려고 하지 마라<br> - 유재석, 방송인 <br>
-                진실로 마음을 견고하게 세워 한결같이 앞으로 나아간다면 태산이라도 옮길 수 있으리라<br> - 다산 정약용, 조선 실학자
-            </p>
-            
-            <div class="flex justify-center">
-                <div class="bg-white px-8 md:px-12 py-5 md:py-7 rounded-[2rem] shadow-lg border border-gray-100 flex flex-wrap justify-center items-center gap-6 md:gap-14">
-                    <div class="text-left">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Target Range</p>
-                        <p class="text-base md:text-lg font-bold text-gray-800 tracking-tight">4.13(월) ~ 4.27(월)</p>
-                    </div>
-                    <div class="hidden sm:block w-px h-8 bg-gray-100"></div>
-                    <div class="text-5xl md:text-7xl font-black text-rose-500 tracking-tighter" id="d-day-display">D-Day</div>
+            <div id="auth-container" class="flex items-center gap-2">
+                <!-- Logged Out State -->
+                <button id="btn-google-login" class="flex items-center gap-1.5 bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-[10px] font-bold hover:bg-gray-50 shadow-sm transition">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-3 h-3" alt="Google"> 로그인
+                </button>
+                <!-- Logged In State (Hidden by default) -->
+                <div id="user-profile" class="hidden flex items-center gap-2">
+                    <img id="user-avatar" src="" class="w-5 h-5 rounded-full border border-gray-200">
+                    <span id="user-display-name" class="text-[10px] font-bold text-gray-700"></span>
+                    <button id="btn-logout" class="text-[9px] text-gray-400 hover:text-rose-500 font-bold underline ml-1">로그아웃</button>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Section 2: 과목별 공략 마스터 -->
-    <section id="subjects" class="page-section bg-stone-50/50">
-        <div class="max-w-6xl mx-auto w-full px-4">
-            <div class="mb-10 text-center">
-                <h2 class="text-2xl md:text-3xl font-black text-gray-900 flex items-center justify-center gap-2">
-                    <span class="text-2xl md:text-3xl">📚</span> 과목별 공략 마스터
-                </h2>
-                <p class="text-xs md:text-sm text-gray-500 mt-2 font-medium">카드를 클릭하세요.</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start" id="subject-grid"></div>
+        <!-- Sticky Sub-Header Navigation (섹션 간편 버튼 바) -->
+        <div class="sticky-nav-bar scrollbar-hide" id="category-nav-bar">
+            <button class="sub-nav-btn active" data-target="hero">홈</button>
+            <button class="sub-nav-btn" data-target="subjects">공략 마스터</button>
+            <button class="sub-nav-btn" data-target="schedule-niche">20일 스케줄</button>
+            <button class="sub-nav-btn" data-target="allday">학습메커니즘</button>
+            <button class="sub-nav-btn" data-target="deepwork-tools">비밀도구</button>
+            <button class="sub-nav-btn" data-target="board">응원보드</button>
+            <button class="sub-nav-btn" data-target="qna">학습 Q&A</button>
         </div>
-    </section>
 
-    <!-- Section 3: 14일 집중 스케줄 & 자투리 시간 활용 -->
-    <section id="schedule-niche" class="page-section">
-        <div class="max-w-6xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Timeline (7/12) -->
-            <div class="lg:col-span-7 bg-white rounded-[2.5rem] p-6 md:p-10 shadow-sm border border-gray-100 h-fit">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-3 mb-3">
-                    <span class="text-2xl md:text-3xl">⏳</span> 14일의 기적 스케줄
-                </h2>
-                <p class="text-xs md:text-sm text-gray-500 mb-8">4월 13일부터 시험 전날까지, 3단계 집중 목표입니다.</p>
-
-                <div class="relative border-l-2 md:border-l-4 border-amber-200 ml-3 md:ml-5 space-y-10 md:space-y-12 pb-4">
-                    <div class="relative timeline-node pl-8 md:pl-10">
-                        <div class="absolute w-5 h-5 md:w-7 md:h-7 bg-amber-400 rounded-full -left-[11px] md:-left-[16px] top-1 border-4 border-white shadow-sm"></div>
-                        <div class="bg-amber-50 rounded-3xl p-5 md:p-6 border border-amber-100">
-                            <span class="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-widest">1단계 (4/13 ~ 4/16)</span>
-                            <h3 class="text-lg font-bold text-gray-800 mt-1">개념 완성기 (내용 정리 & 암기 노트)</h3>
-                            <ul class="mt-3 text-xs md:text-sm text-gray-600 space-y-2">
-                                <li>• 전 과목 교과서 정독(3회 이상) 및 노트 정리(미니 암기노트)</li>
-                                <li>• 낯선 용어 완벽 정리 (특히 사회/과학/한국사)</li>
-                                <li>• 수학 기본 예제 및 유제 풀이 (연습장에 따로 풀 것)</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="relative timeline-node pl-8 md:pl-10">
-                        <div class="absolute w-5 h-5 md:w-7 md:h-7 bg-orange-400 rounded-full -left-[11px] md:-left-[16px] top-1 border-4 border-white shadow-sm"></div>
-                        <div class="bg-orange-50 rounded-3xl p-5 md:p-6 border border-orange-100">
-                            <span class="text-[10px] md:text-xs font-bold text-orange-600 uppercase tracking-widest">2단계 (4/16 ~ 4/21)</span>
-                            <h3 class="text-lg font-bold text-gray-800 mt-1">문제 적용기 (과목별 연습장 마련 for 개념 & 오답 정리)</h3>
-                            <ul class="mt-3 text-xs md:text-sm text-gray-600 space-y-2">
-                                <li>• 교과서 + 기출문제 및 학습지 3회독 반복</li>
-                                <li>• 암기 과목 본격적인 핵심 키워드 인출 학습</li>
-                                <li>• 틀린 문제 분석 및 취약 단원 집중 보완</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="relative timeline-node pl-8 md:pl-10">
-                        <div class="absolute w-5 h-5 md:w-7 md:h-7 bg-rose-400 rounded-full -left-[11px] md:-left-[16px] top-1 border-4 border-white shadow-sm"></div>
-                        <div class="bg-rose-50 rounded-3xl p-5 md:p-6 border border-rose-100">
-                            <span class="text-[10px] md:text-xs font-bold text-rose-600 uppercase tracking-widest">3단계 (4/22 ~ 4/26)</span>
-                            <h3 class="text-lg font-bold text-gray-800 mt-1">최종 정리기</h3>
-                            <ul class="mt-3 text-xs md:text-sm text-gray-600 space-y-2">
-                                <li>• 오답 노트 무한 복습 및 실수 패턴 제거</li>
-                                <li>• 암기 노트 활용 자투리 시간 무한 반복</li>
-                                <li>• 실전 모의 테스트로 시간 분배 훈련</li>
-                            </ul>
-                        </div>
-                    </div>
+        <!-- Admin Password Modal -->
+        <div id="admin-modal" class="fixed inset-0 bg-black/50 z-[110] hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-transform">
+                <h3 class="font-bold text-base mb-2 text-gray-800">관리자 권한 확인 🔒</h3>
+                <p class="text-xs text-gray-500 mb-4">해당 항목을 삭제하려면 관리자 비밀번호를 입력하세요. <br></p>
+                <input type="password" id="admin-pwd" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 outline-none focus:ring-1 focus:ring-rose-400" placeholder="비밀번호 입력">
+                <div id="admin-msg" class="hidden text-rose-500 text-[10px] font-bold mb-4"></div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button id="btn-admin-cancel" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-200">취소</button>
+                    <button id="btn-admin-confirm" class="px-4 py-2 bg-rose-500 text-white rounded-lg text-xs font-bold hover:bg-rose-600">삭제 확인</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Niche Time Manual (5/12) -->
-            <div class="lg:col-span-5 bg-white rounded-[2.5rem] p-6 md:p-10 shadow-sm border border-gray-100 flex flex-col h-fit">
-                <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-3 mb-3">
-                    <span class="text-2xl md:text-3xl">⏱️</span> 자투리 시간 활용 매뉴얼
-                </h2>
-                <p class="text-xs md:text-sm text-gray-500 mb-8">하루 2시간의 숨은 시간을 찾아 성적을 바꾸세요.</p>
+        <!-- Custom Nickname Modal (Fallback) -->
+        <div id="nickname-modal" class="fixed inset-0 bg-black/50 z-[110] hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-all duration-200">
+                <h3 class="font-bold text-base mb-2 text-gray-800">임시 프로필 생성 ✏️</h3>
+                <p class="text-[11px] text-gray-500 mb-4 leading-relaxed">
+                    미리보기 환경에서는 보안 정책 상 실제 구글 로그인이 원활하지 않을 수 있습니다. 대시보드 테스트용 닉네임을 설정해 주세요.
+                </p>
+                <input type="text" id="nickname-input" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-xs mb-2 outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition" placeholder="예: 10124 홍길동">
+                <div id="nickname-error" class="hidden text-rose-500 text-[10px] font-bold mb-2">닉네임을 입력해 주세요.</div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button id="btn-nickname-cancel" class="px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl text-xs font-bold transition">취소</button>
+                    <button id="btn-nickname-confirm" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-100 transition">설정 완료</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[150] flex flex-col gap-2 pointer-events-none w-[90%] max-w-[400px]"></div>
+
+        <!-- Section 1: Hero -->
+        <section id="hero" class="page-section">
+            <div class="text-center px-2">
+                <div class="inline-block bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[9px] font-bold mb-4 tracking-wider uppercase">
+                    First Midterm Exam Roadmap
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-3 tracking-tight leading-tight">
+                    1학년 8반 기말고사 대비<br><span class="text-rose-500">대시보드</span>
+                </h1>
+                <p class="text-[11px] sm:text-xs text-gray-400 mb-6 font-medium leading-relaxed">
+                    최선을 다하지도 않으면서 최고가 되려고 하지 마라<br> - 유재석, 방송인 <br class="my-1">
+                    진실로 마음을 견고하게 세워 한결같이 앞으로 나아간다면 태산이라도 옮길 수 있으리라<br> - 다산 정약용, 조선 실학자
+                </p>
                 
-                <div class="space-y-4 flex-grow">
-                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-amber-50 border border-amber-100 transition-colors">
-                        <div class="text-xl">🌅</div>
-                        <div>
-                            <h4 class="font-bold text-amber-900 text-sm md:text-base">아침 시간 (등교 전/후)</h4>
-                            <p class="text-xs md:text-sm text-amber-800 mt-1 leading-relaxed"><strong>개념 & 비문학:</strong> 잠을 깨우는 가벼운 암기. 짧은 지문 독해로 뇌 예열.</p>
+                <div class="flex justify-center">
+                    <div class="bg-white px-5 py-4 rounded-[1.5rem] shadow-md border border-gray-100 flex justify-center items-center gap-6">
+                        <div class="text-left">
+                            <p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Target Range</p>
+                            <p class="text-xs font-bold text-gray-800 tracking-tight">6.8(월) ~ 6.30(화)</p>
+                        </div>
+                        <div class="w-px h-6 bg-gray-150"></div>
+                        <div class="text-3xl sm:text-4xl font-black text-rose-500 tracking-tighter" id="d-day-display">D-Day</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 과목별 공략 마스터 -->
+        <section id="subjects" class="page-section bg-stone-50/50">
+            <div class="w-full">
+                <div class="mb-6 text-center">
+                    <h2 class="text-xl font-black text-gray-900 flex items-center justify-center gap-1.5">
+                        <span>📚</span> 과목별 공략 마스터
+                    </h2>
+                    <p class="text-[10px] text-gray-400 mt-1 font-medium">카드를 터치해 보세요.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-3.5" id="subject-grid"></div>
+            </div>
+        </section>
+
+        <!-- Section 3: 14일 집중 스케줄 & 자투리 시간 활용 -->
+        <section id="schedule-niche" class="page-section">
+            <div class="w-full space-y-6">
+                <!-- Timeline -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-2">
+                        <span>⏳</span> 20일의 기적 스케줄
+                    </h2>
+                    <p class="text-[10px] text-gray-400 mb-6">오늘부터 시험 전날까지, 3단계 집중 목표입니다.</p>
+
+                    <div class="relative border-l border-amber-200 ml-2 space-y-6 pb-2">
+                        <!-- Phase 1 -->
+                        <div class="relative pl-6">
+                            <div class="absolute w-3.5 h-3.5 bg-amber-400 rounded-full -left-[8px] top-1 border-2 border-white shadow-sm"></div>
+                            <div class="bg-amber-50/60 rounded-2xl p-4 border border-amber-100/60">
+                                <span class="text-[9px] font-bold text-amber-600 uppercase tracking-widest">1단계 (6/8 ~ 6/17)</span>
+                                <h3 class="text-xs font-bold text-gray-800 mt-0.5">개념 완성기 (내용 정리 & 암기 노트)</h3>
+                                <ul class="mt-2 text-[10px] text-gray-500 space-y-1">
+                                    <li>• 전 과목 교과서 정독 및 미니 암기노트 작성</li>
+                                    <li>• 낯선 사회/과학/한국사 용어 완벽 정리</li>
+                                    <li>• 수학 기본 예제 및 유제 반복 풀이</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Phase 2 -->
+                        <div class="relative pl-6">
+                            <div class="absolute w-3.5 h-3.5 bg-orange-400 rounded-full -left-[8px] top-1 border-2 border-white shadow-sm"></div>
+                            <div class="bg-orange-50/60 rounded-2xl p-4 border border-orange-100/60">
+                                <span class="text-[9px] font-bold text-orange-600 uppercase tracking-widest">2단계 (6/18 ~ 6/24)</span>
+                                <h3 class="text-xs font-bold text-gray-800 mt-0.5">문제 적용기 (개념 & 오답 정리)</h3>
+                                <ul class="mt-2 text-[10px] text-gray-500 space-y-1">
+                                    <li>• 교과서 + 기출문제 및 학습지 3회독</li>
+                                    <li>• 암기 과목 본격 핵심 키워드 인출</li>
+                                    <li>• 오답 오작동 단원 보완</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Phase 3 -->
+                        <div class="relative pl-6">
+                            <div class="absolute w-3.5 h-3.5 bg-rose-400 rounded-full -left-[8px] top-1 border-2 border-white shadow-sm"></div>
+                            <div class="bg-rose-50/60 rounded-2xl p-4 border border-rose-100/60">
+                                <span class="text-[9px] font-bold text-rose-600 uppercase tracking-widest">3단계 (6/25 ~ 6/30)</span>
+                                <h3 class="text-xs font-bold text-gray-800 mt-0.5">최종 정리기</h3>
+                                <ul class="mt-2 text-[10px] text-gray-500 space-y-1">
+                                    <li>• 오답 노트 무한 복습 및 실수 차단</li>
+                                    <li>• 실전 테스트로 시간 관리 분배 훈련</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-100 transition-colors">
-                        <div class="text-xl">🔔</div>
-                        <div>
-                            <h4 class="font-bold text-emerald-900 text-sm md:text-base">쉬는 시간 (10분)</h4>
-                            <p class="text-xs md:text-sm text-emerald-800 mt-1 leading-relaxed"><strong>5분 복습법:</strong> 직전 시간 핵심 키워드 3개만 적어보기.</p>
+                </div>
+
+                <!-- Niche Time Manual -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-2">
+                        <span>⏱️</span> 자투리 시간 활용 매뉴얼
+                    </h2>
+                    <p class="text-[10px] text-gray-400 mb-4">하루 2시간의 숨은 틈새 시간을 활용하세요.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50 border border-amber-100/50">
+                            <div class="text-base mt-0.5">🌅</div>
+                            <div>
+                                <h4 class="font-bold text-amber-900 text-xs">아침 시간 (등교 전/후)</h4>
+                                <p class="text-[10px] text-amber-800 mt-0.5 leading-relaxed">잠을 깨우는 가벼운 암기로 뇌 예열.</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-blue-50 border border-blue-100 transition-colors">
-                        <div class="text-xl">🍱</div>
-                        <div>
-                            <h4 class="font-bold text-blue-900 text-sm md:text-base">점심 시간 (식후 20분)</h4>
-                            <p class="text-xs md:text-sm text-blue-800 mt-1 leading-relaxed"><strong>암기 과목:</strong> 시대순 연표나 과학 공식을 눈에 익히기.</p>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-100/50">
+                            <div class="text-base mt-0.5">🔔</div>
+                            <div>
+                                <h4 class="font-bold text-emerald-900 text-xs">쉬는 시간 (10분)</h4>
+                                <p class="text-[10px] text-emerald-800 mt-0.5 leading-relaxed"><strong>5분 복습:</strong> 직전 시간 핵심 키워드 3개 적어보기.</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-indigo-50 border border-indigo-100 transition-colors">
-                        <div class="text-xl">✍️</div>
-                        <div>
-                            <h4 class="font-bold text-indigo-900 text-sm md:text-base">저녁 시간 (본 학습)</h4>
-                            <p class="text-xs md:text-sm text-indigo-800 mt-1 leading-relaxed"><strong>심화 집중:</strong> 수학/국어 등 무거운 공부 집중 처리.</p>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100/50">
+                            <div class="text-base mt-0.5">🍱</div>
+                            <div>
+                                <h4 class="font-bold text-blue-900 text-xs">점심 시간 (식후 20분)</h4>
+                                <p class="text-[10px] text-blue-800 mt-0.5 leading-relaxed">역사 시대순 연표나 과학 공식을 눈에 가볍게 익히기.</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-rose-50 border border-rose-100 transition-colors">
-                        <div class="text-xl">🌙</div>
-                        <div>
-                            <h4 class="font-bold text-rose-900 text-sm md:text-base">잠자기 전 (30분)</h4>
-                            <p class="text-xs md:text-sm text-rose-800 mt-1 leading-relaxed"><strong>인출 연습:</strong> 오늘 배운 내용을 눈 감고 머릿속으로 시뮬레이션.</p>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-indigo-50 border border-indigo-100/50">
+                            <div class="text-base mt-0.5">✍️</div>
+                            <div>
+                                <h4 class="font-bold text-indigo-900 text-xs">저녁 시간 (본 학습)</h4>
+                                <p class="text-[10px] text-indigo-800 mt-0.5 leading-relaxed">수학/국어 등 몰입도가 필요한 무거운 과목/개념/원리 집중.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-rose-50 border border-rose-100/50">
+                            <div class="text-base mt-0.5">🌙</div>
+                            <div>
+                                <h4 class="font-bold text-rose-900 text-xs">잠자기 전 (30분)</h4>
+                                <p class="text-[10px] text-rose-800 mt-0.5 leading-relaxed">오늘 배운 내용을 눈 감고 머릿속으로 회상하기.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Section 4: 에너지 분포 시스템 -->
-    <section id="allday" class="page-section bg-stone-50/50">
-        <div class="max-w-6xl mx-auto w-full px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="text-center lg:text-left">
-                    <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-5 leading-tight tracking-tight">
-                        All-Day<br><span class="text-indigo-600 text-2xl md:text-4xl">학습 매커니즘</span>
+        <!-- Section 4: 에너지 분포 시스템 -->
+        <section id="allday" class="page-section bg-stone-50/50">
+            <div class="w-full space-y-6">
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-gray-900 mb-2">
+                        All-Day 학습 매커니즘
                     </h2>
-                    <p class="text-sm md:text-base text-gray-500 mb-10 leading-relaxed font-medium">
-                        어느 시간에 어떤 과목을 할지 전략적으로 정해야 합니다.<br>집중력이 가장 높은 시간에 수학과 어려운 과목을 배치하세요.
+                    <p class="text-[11px] text-gray-500 leading-relaxed font-medium">
+                        어느 시간에 어떤 과목을 할지 전략적으로 정해야 합니다.<br>집중력이 높은 시간에 어려운 과목을 배치하세요.
                     </p>
-                    <div class="space-y-4">
-                        <div class="bg-blue-50/80 p-5 rounded-2xl border border-blue-100 text-left transition-transform hover:scale-[1.02]">
-                            <h4 class="font-black text-blue-900 text-base mb-1">☀️ 아침 시간 (07:00 ~ 08:20) : 언어 및 암기 활성</h4>
-                            <p class="text-blue-700 text-xs">영단어 및 국어 음운 규칙, 어려운 용어를 가볍게 인출하며 뇌를 깨우세요.</p>
-                        </div>
-                        <div class="bg-blue-50/80 p-5 rounded-2xl border border-blue-100 text-left transition-transform hover:scale-[1.02]">
-                            <h4 class="font-black text-blue-900 text-base mb-1">🎯 학교 자투리 시간 (쉬는시간/점심시간) : 빠른 키워드 복습</h4>
-                            <p class="text-blue-700 text-xs">쉬는 시간 5분 키워드 복습, 점심 20분 암기노트 활용. 저녁 시간을 확보하는 핵심 열쇠입니다</p>
-                        </div>
-                        <div class="bg-indigo-50/80 p-5 rounded-2xl border border-indigo-100 text-left transition-transform hover:scale-[1.02]">
-                            <h4 class="font-black text-indigo-900 text-base mb-1">🏫 방과후 & 골든타임 (16:40 ~ 24:00): 몰입과 고도 심화</h4>
-                            <p class="text-indigo-700 text-xs">각 과목별 난이도 있는 개념/원리 및 문제를 집중 공략하세요.</p>
-                        </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="bg-blue-50/80 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-black text-blue-900 text-xs mb-0.5">☀️ 아침 시간 (07:00 ~ 08:20) : 예열</h4>
+                        <p class="text-blue-700 text-[10px]">영단어 및 국어 문법을 가볍게 인출하며 뇌를 깨웁니다.</p>
+                    </div>
+                    <div class="bg-blue-50/80 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-black text-blue-900 text-xs mb-0.5">🎯 학교 자투리 시간 : 빠른 키워드 복습</h4>
+                        <p class="text-blue-700 text-[10px]">쉬는 시간 5분 키워드 복습, 점심 20분 암기노트 활용.</p>
+                    </div>
+                    <div class="bg-indigo-50/80 p-4 rounded-xl border border-indigo-100">
+                        <h4 class="font-black text-indigo-900 text-xs mb-0.5">🏫 방과후 (16:40 ~ 24:00): 몰입과 고도 심화</h4>
+                        <p class="text-indigo-700 text-[10px]">난이도 있는 개념 원리 및 문제를 집중 공략하세요.</p>
                     </div>
                 </div>
-                <div class="bg-white rounded-[3rem] p-8 shadow-xl border border-gray-50 flex flex-col items-center">
-                    <h4 class="font-bold text-gray-800 mb-6 text-sm md:text-base tracking-tight italic">Best Focus Curve</h4>
+
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col items-center">
+                    <h4 class="font-bold text-gray-700 mb-4 text-xs italic">Best Focus Curve</h4>
                     <div class="chart-container">
                         <canvas id="allDayChart"></canvas>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Section 5: 비밀 도구 & 몰입법 -->
-    <section id="deepwork-tools" class="page-section bg-gray-900 text-white">
-        <div class="max-w-6xl mx-auto w-full px-4">
-            <div class="mb-14 text-center">
-                <h2 class="text-2xl md:text-4xl font-black mb-3 tracking-tight">
-                    <span class="text-3xl md:text-4xl">📓</span> 몰입의 비밀 도구
-                </h2>
-                <p class="text-gray-400 text-[11px] md:text-xs uppercase tracking-widest">Strategic Management Pro</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
-                <div class="bg-gradient-to-br from-indigo-50/10 to-blue-50/10 rounded-[2rem] p-8 border border-white/10 group transition-all hover:bg-white/5">
-                    <h3 class="text-xl font-bold text-blue-400 mb-6 flex items-center gap-2">✅ 스터디 플래너 (매일의 약속)</h3>
-                    <ul class="space-y-4 text-gray-300">
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-blue-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">1</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>구체적 기록:</strong> '수학 공부' (X) ➔ '수학 교과서 p.10~20 풀기' (O)</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-blue-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">2</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>우선순위:</strong> 가장 하기 싫거나 중요한 과목에 별표(⭐)를 치고 최우선 처리.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-blue-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">3</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>순공시간 체크:</strong> 목표 시간과 실제 공부 시간이 얼마나 차이 나는지 확인.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-blue-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">4</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>엄격한 피드백:</strong> 취침 전 완료 여부 체크 후 내일 계획에 즉시 반영.</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="bg-gradient-to-br from-emerald-50/10 to-green-50/10 rounded-[2.5rem] p-8 border border-white/10 group transition-all hover:bg-white/5">
-                    <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2">📔 암기노트 (나만의 보물)</h3>
-                    <ul class="space-y-4 text-gray-300">
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-emerald-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">1</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>반 권법 (코넬):</strong> 노트를 세로로 반 접어 왼쪽엔 '질문/문제', 오른쪽엔 '답' 적기.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-emerald-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">2</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>키워드 매핑:</strong> 문장보다는 핵심 단어 위주로 적고 스스로 설명하며 확인.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-emerald-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">3</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>자투리 시간:</strong> 등하교 시간, 급식 줄 등 틈새 시간엔 오직 이 노트만 반복.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="font-bold bg-emerald-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0 mt-0.5 shadow-lg">4</span>
-                            <span class="text-sm md:text-base leading-relaxed"><strong>백지 인출:</strong> 한 단원 끝날 때마다 빈 종이에 아는 것을 모두 쓰고 기억 나지 않는 부분은 형광펜으로 체크하고 다시 반복.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 추천 가이드 영상 -->
-            <div class="mt-16">
-                <div class="mb-10 text-center">
-                    <h3 class="text-xl md:text-2xl font-bold flex items-center justify-center gap-2 text-gray-200">
-                        <span class="text-2xl">📺</span> 추천 가이드 영상
-                    </h3>
-                    <p class="text-xs md:text-sm text-gray-500 mt-2">영상을 보며 나만의 공부법을 완성해 보세요.</p>
+        <!-- Section 5: 비밀 도구 & 몰입법 -->
+        <section id="deepwork-tools" class="page-section bg-gray-900 text-white">
+            <div class="w-full space-y-6">
+                <div class="text-center">
+                    <h2 class="text-lg font-black mb-1">
+                        📓 몰입의 비밀 도구
+                    </h2>
+                    <p class="text-gray-400 text-[9px] uppercase tracking-widest">Strategic Management Pro</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- 플래너 작성 -->
-                    <div class="bg-gray-800/40 rounded-3xl p-5 border border-white/10 transition-transform hover:-translate-y-1">
-                        <h4 class="text-blue-400 font-bold mb-4 text-sm md:text-base flex items-center gap-2">
-                            <span class="bg-blue-500/20 px-2 py-1 rounded text-[10px] uppercase">Guide 1</span> 플래너 작성법
-                        </h4>
-                        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-700">
-                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/xjZU5Rdrgko" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                        </div>
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-br from-indigo-50/10 to-blue-50/10 rounded-2xl p-5 border border-white/10">
+                        <h3 class="text-sm font-bold text-blue-400 mb-4 flex items-center gap-1.5">✅ 스터디 플래너</h3>
+                        <ul class="space-y-3.5 text-gray-300 text-[10px] leading-relaxed">
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold bg-blue-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-[9px] shrink-0 mt-0.5 shadow">1</span>
+                                <span>'수학 공부' (X) ➔ '수학 교과서 p.10~20 풀기' (O)로 구체화</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold bg-blue-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-[9px] shrink-0 mt-0.5 shadow">2</span>
+                                <span>가장 까다로운 과목에 별표(⭐) 후 최우선으로 처리</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold bg-blue-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-[9px] shrink-0 mt-0.5 shadow">3</span>
+                                <span>취침 전 계획 달성 유무 피드백을 통해 내일 목표 조율</span>
+                            </li>
+                        </ul>
                     </div>
 
-                    <!-- 개념노트 작성 -->
-                    <div class="bg-gray-800/40 rounded-3xl p-5 border border-white/10 transition-transform hover:-translate-y-1">
-                        <h4 class="text-emerald-400 font-bold mb-4 text-sm md:text-base flex items-center gap-2">
-                            <span class="bg-emerald-500/20 px-2 py-1 rounded text-[10px] uppercase">Guide 2</span> 개념노트 작성법
-                        </h4>
-                        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-700">
-                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/DZIwbBdagDA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                        </div>
+                    <div class="bg-gradient-to-br from-emerald-50/10 to-green-50/10 rounded-2xl p-5 border border-white/10">
+                        <h3 class="text-sm font-bold text-emerald-400 mb-4 flex items-center gap-1.5">📔 암기노트</h3>
+                        <ul class="space-y-3.5 text-gray-300 text-[10px] leading-relaxed">
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold bg-emerald-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-[9px] shrink-0 mt-0.5 shadow">1</span>
+                                <span>노트를 세로로 접어 왼쪽 '질문/개념', 오른쪽 '답' 형태로 가리며 암기</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="font-bold bg-emerald-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-[9px] shrink-0 mt-0.5 shadow">2</span>
+                                <span>단원 끝날 때마다 빈 종이에 아는 것을 모두 적는 백지인출 수행</span>
+                            </li>
+                        </ul>
                     </div>
+                </div>
 
-                    <!-- 시험 기간 플랜 -->
-                    <div class="bg-gray-800/40 rounded-3xl p-5 border border-white/10 transition-transform hover:-translate-y-1">
-                        <h4 class="text-rose-400 font-bold mb-4 text-sm md:text-base flex items-center gap-2">
-                            <span class="bg-rose-500/20 px-2 py-1 rounded text-[10px] uppercase">Guide 3</span> 시험 기간 플랜
-                        </h4>
-                        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-700">
-                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/tMJMCFuQhQQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <!-- 추천 가이드 영상 -->
+                <div class="pt-4 border-t border-white/5 space-y-4">
+                    <div class="text-center">
+                        <h3 class="text-sm font-bold text-gray-300 flex items-center justify-center gap-1.5">
+                            <span>📺</span> 추천 가이드 영상
+                        </h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-800/40 rounded-2xl p-4 border border-white/10">
+                            <h4 class="text-blue-400 font-bold mb-3 text-xs flex items-center gap-1.5">
+                                <span class="bg-blue-500/20 px-1.5 py-0.5 rounded text-[8px]">Guide 1</span> 플래너 작성법
+                            </h4>
+                            <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-700">
+                                <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/xjZU5Rdrgko" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/40 rounded-2xl p-4 border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mb-3 text-xs flex items-center gap-1.5">
+                                <span class="bg-emerald-500/20 px-1.5 py-0.5 rounded text-[8px]">Guide 2</span> 개념노트 작성법
+                            </h4>
+                            <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-700">
+                                <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/DZIwbBdagDA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/40 rounded-2xl p-4 border border-white/10">
+                            <h4 class="text-rose-400 font-bold mb-3 text-xs flex items-center gap-1.5">
+                                <span class="bg-rose-500/20 px-1.5 py-0.5 rounded text-[8px]">Guide 3</span> 시험 기간 플랜
+                            </h4>
+                            <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-700">
+                                <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/tMJMCFuQhQQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-        </div>
-    </section>
+        <!-- Section 6: 응원 보드 -->
+        <section id="board" class="page-section">
+            <div class="w-full">
+                <div class="mb-6 text-center">
+                    <h2 class="text-xl font-black text-rose-500 flex items-center justify-center gap-1.5">
+                        <span>💖</span> 우리들의 응원 보드
+                    </h2>
+                    <p class="text-[10px] text-gray-500 mt-2 font-medium">안전하고 깨끗한 문화를 위해 로그인 후 작성 가능합니다.<br>🌸서로를 위해 예의를 갖춘 존댓말로 작성해주세요🌸</p>
+                </div>
 
-    <!-- Section 6: 응원 보드 -->
-    <section id="board" class="page-section">
-        <div class="max-w-6xl mx-auto w-full px-4">
-            <div class="mb-10 text-center">
-                <h2 class="text-2xl md:text-3xl font-black text-rose-500 flex items-center justify-center gap-3">
-                    <span class="text-2xl md:text-3xl">💖</span> 우리들의 응원 보드
-                </h2>
-                <p class="text-xs md:text-sm text-gray-500 mt-2 font-medium">안전하고 깨끗한 문화를 위해 구글 로그인 후 작성 가능합니다.<br>🌸서로를 위해 예의를 갖춘 존댓말로 작성해주세요🌸</p>
+                <div class="bg-amber-50/10 rounded-2xl p-4 border border-amber-100">
+                    <div class="bg-white rounded-xl p-4 shadow-sm mb-6 border border-amber-50">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex gap-2">
+                                <div class="author-display w-1/3 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold text-gray-400 flex items-center justify-center gap-1">
+                                    🔒 로그인 필요
+                                </div>
+                                <input id="note-content" type="text" data-placeholder="응원 메시지를 남겨주세요!" placeholder="로그인 후 작성" class="auth-required w-2/3 border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-1 focus:ring-amber-200 outline-none text-[11px]" disabled>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1.5">
+                                    <label for="note-image" class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2.5 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">📷 사진</label>
+                                    <input id="note-image" type="file" accept="image/*" class="auth-required hidden" disabled>
+                                    <span id="note-file-name" class="text-[9px] text-gray-400 truncate max-w-[100px]">파일 없음</span>
+                                </div>
+                                <button id="btn-add-note" class="auth-required bg-rose-400 hover:bg-rose-500 text-white font-black px-4 py-1.5 rounded-lg transition-all text-[10px] disabled:opacity-50" disabled>게시하기</button>
+                            </div>
+                        </div>
+                        <div id="form-msg" class="hidden text-rose-500 text-center mt-2.5 text-[9px] font-bold"></div>
+                    </div>
+                    <div id="note-board" class="grid grid-cols-2 gap-3.5 min-h-[180px] items-start"></div>
+                    <!-- 응원 보드 페이지네이션 -->
+                    <div id="board-pagination" class="flex justify-center gap-1.5 mt-6 flex-wrap"></div>
+                </div>
             </div>
+        </section>
 
-            <div class="bg-amber-50/10 rounded-[3rem] p-6 md:p-8 border border-amber-100">
-                <div class="bg-white rounded-3xl p-6 shadow-md mb-10 border border-amber-50 max-w-3xl mx-auto">
+        <!-- Section 6.5: QnA 게시판 -->
+        <section id="qna" class="page-section bg-blue-50/30">
+            <div class="w-full">
+                <div class="mb-6 text-center">
+                    <h2 class="text-xl font-black text-blue-600 flex items-center justify-center gap-1.5">
+                        <span>🙋‍♂️</span> 시험 지식 공유 Q&A
+                    </h2>
+                    <p class="text-[10px] text-gray-500 mt-2 font-medium">모르는 문제를 묻고 답하며 함께 성장해요.<br>질문과 답변 모두 고운 높임말로 나누어주세요.</p>
+                </div>
+
+                <!-- QnA Form -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm mb-6 border border-blue-100">
                     <div class="flex flex-col gap-3">
-                        <div class="flex flex-col md:flex-row gap-3">
-                            <div class="author-display md:w-1/4 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-[11px] font-bold text-gray-400 flex items-center gap-2">
-                                🔒 로그인 필요
-                            </div>
-                            <input id="note-content" type="text" data-placeholder="응원 메시지를 남겨주세요! (자유롭게 작성)" placeholder="구글 로그인 후 작성 가능합니다." class="auth-required md:w-3/4 border border-gray-200 rounded-xl px-4 py-2 focus:ring-1 focus:ring-amber-200 outline-none text-[11px]" disabled>
+                        <div class="flex gap-2">
+                            <select id="qna-category" class="auth-required w-1/3 border border-gray-200 rounded-lg px-2 py-1 text-[10px] outline-none text-gray-600 font-bold focus:ring-1 focus:ring-blue-200" disabled>
+                                <option value="종합">종합</option>
+                                <option value="국어">국어</option>
+                                <option value="수학">수학</option>
+                                <option value="영어">영어</option>
+                                <option value="사회">사회</option>
+                                <option value="과학">과학</option>
+                                <option value="한국사">한국사</option>
+                                <option value="정보">정보</option>
+                            </select>
+                            <input id="qna-sid" type="text" data-placeholder="학번 (예: 10101)" placeholder="로그인 후 작성" class="auth-required w-2/3 border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-1 focus:ring-blue-200 outline-none text-[10px]" disabled>
                         </div>
-                        <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
-                            <div class="flex items-center gap-2 w-full md:w-2/3">
-                                <label for="note-image" class="text-[10px] font-bold text-gray-500 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">📷 사진 첨부</label>
-                                <input id="note-image" type="file" accept="image/*" class="auth-required hidden" disabled>
-                                <span id="note-file-name" class="text-[9px] text-gray-400 truncate max-w-[150px]">선택된 파일 없음</span>
-                            </div>
-                            <button id="btn-add-note" class="auth-required w-full md:w-1/3 bg-rose-400 hover:bg-rose-500 text-white font-black py-2 rounded-xl transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed" disabled>응원 게시하기</button>
-                        </div>
-                    </div>
-                    <div id="form-msg" class="hidden text-rose-500 text-center mt-3 text-[10px] font-bold"></div>
-                </div>
-                <div id="note-board" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[300px] items-start"></div>
-                <!-- 응원 보드 페이지네이션 -->
-                <div id="board-pagination" class="flex justify-center gap-2 mt-8 flex-wrap"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Section 6.5: QnA 게시판 -->
-    <section id="qna" class="page-section bg-blue-50/30">
-        <div class="max-w-6xl mx-auto w-full px-4">
-            <div class="mb-10 text-center">
-                <h2 class="text-2xl md:text-3xl font-black text-blue-600 flex items-center justify-center gap-3">
-                    <span class="text-2xl md:text-3xl">🙋‍♂️</span> 지식 공유 Q&A
-                </h2>
-                <p class="text-xs md:text-sm text-gray-500 mt-2 font-medium">모르는 문제를 묻고, 친구의 질문에 답하며 함께 성장해요.<br> 지식을 나누는 소중한 공간입니다. 질문과 답변 모두 높임말로 작성해 주시기 바랍니다 </p>
-            </div>
-
-            <!-- QnA Form -->
-            <div class="bg-white rounded-3xl p-6 shadow-md mb-10 border border-blue-100 max-w-3xl mx-auto">
-                <div class="flex flex-col gap-3">
-                    <div class="flex flex-col md:flex-row gap-3">
-                        <select id="qna-category" class="auth-required md:w-1/4 border border-gray-200 rounded-xl px-3 py-2 text-[11px] outline-none text-gray-600 font-bold focus:ring-1 focus:ring-blue-200" disabled>
-                            <option value="종합">종합</option>
-                            <option value="국어">국어</option>
-                            <option value="수학">수학</option>
-                            <option value="영어">영어</option>
-                            <option value="사회">사회</option>
-                            <option value="과학">과학</option>
-                            <option value="한국사">한국사</option>
-                        </select>
-                        <input id="qna-sid" type="text" data-placeholder="학번 (예: 10101)" placeholder="구글 로그인 후 작성 가능" class="auth-required md:w-1/4 border border-gray-200 rounded-xl px-4 py-2 focus:ring-1 focus:ring-blue-200 outline-none text-[11px]" disabled>
-                        <div class="author-display md:w-2/4 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-[11px] font-bold text-gray-400 flex items-center gap-2">
+                        <div class="author-display w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-bold text-gray-400 flex items-center gap-1.5">
                             🔒 로그인 필요
                         </div>
-                    </div>
-                    <textarea id="qna-content" data-placeholder="어떤 부분이 헷갈리나요? 자세히 적어주세요.()" placeholder="구글 로그인 후 작성 가능합니다." class="auth-required w-full border border-gray-200 rounded-xl px-4 py-3 h-24 resize-none focus:ring-1 focus:ring-blue-200 outline-none text-xs" disabled></textarea>
-                    
-                    <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
-                        <div class="flex items-center gap-2 w-full md:w-2/3">
-                            <label for="qna-image" class="text-[10px] font-bold text-gray-500 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">📷 문제 사진 첨부</label>
-                            <input id="qna-image" type="file" accept="image/*" class="auth-required hidden" disabled>
-                            <span id="qna-file-name" class="text-[9px] text-gray-400 truncate max-w-[150px]">선택된 파일 없음</span>
+                        <textarea id="qna-content" data-placeholder="어떤 부분이 헷갈리나요? 자세히 적어주세요." placeholder="로그인 후 작성 가능합니다." class="auth-required w-full border border-gray-200 rounded-lg px-3 py-2 h-20 resize-none focus:ring-1 focus:ring-blue-200 outline-none text-[11px]" disabled></textarea>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <label for="qna-image" class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2.5 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">📷 문제 첨부</label>
+                                <input id="qna-image" type="file" accept="image/*" class="auth-required hidden" disabled>
+                                <span id="qna-file-name" class="text-[9px] text-gray-400 truncate max-w-[100px]">파일 없음</span>
+                            </div>
+                            <button id="btn-add-qna" class="auth-required bg-blue-500 hover:bg-blue-600 text-white font-black px-4 py-1.5 rounded-lg transition-all text-[10px] disabled:opacity-50" disabled>질문 등록</button>
                         </div>
-                        <button id="btn-add-qna" class="auth-required w-full md:w-1/3 bg-blue-500 hover:bg-blue-600 text-white font-black py-2 rounded-xl transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed" disabled>질문 등록하기</button>
+                    </div>
+                    <div id="qna-form-msg" class="hidden text-rose-500 text-center mt-2.5 text-[9px] font-bold"></div>
+                </div>
+
+                <!-- QnA Tabs & List -->
+                <div class="w-full">
+                    <div class="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide" id="qna-tabs-container">
+                        <button onclick="window.setQnaFilter('전체')" class="qna-tab active bg-blue-500 text-white px-4 py-1 rounded-full text-[10px] font-bold shrink-0 shadow-sm transition-colors">전체</button>
+                        <button onclick="window.setQnaFilter('종합')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">종합</button>
+                        <button onclick="window.setQnaFilter('국어')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">국어</button>
+                        <button onclick="window.setQnaFilter('수학')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">수학</button>
+                        <button onclick="window.setQnaFilter('영어')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">영어</button>
+                        <button onclick="window.setQnaFilter('사회')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">사회</button>
+                        <button onclick="window.setQnaFilter('과학')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">과학</button>
+                        <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">한국사</button>
+                        <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">정보</button>
+                    </div>
+                    
+                    <div id="qna-list" class="space-y-3.5 min-h-[180px]"></div>
+                    <!-- QnA 페이지네이션 -->
+                    <div id="qna-pagination" class="flex justify-center gap-1.5 mt-6 flex-wrap"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Footer -->
+        <section id="footer" class="page-section bg-stone-50 overflow-hidden">
+            <div class="w-full text-center relative px-2">
+                <div class="bg-white p-5 rounded-[1.5rem] shadow border border-stone-100 relative">
+                    <div class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-amber-200 rounded-full opacity-30 animate-pulse"></div>
+                    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm rotate-2">
+                        <span class="text-base">💌</span>
+                    </div>
+                    <h3 class="text-amber-600 font-black mb-2 text-xs tracking-tight uppercase">Message from 선생님</h3>
+                    <p class="text-[10px] md:text-[11px] font-medium text-gray-500 leading-relaxed mb-4 italic">
+                        "공부가 힘겹게 느껴지는 건 네가 제대로 <strong class="text-rose-500">성장</strong>하고 있다는 증거란다. 한 번에 모든 걸 다 하려 하지 말고, 오늘 계획한 분량만이라도 꼭 지켜보자. 선생님들은 언제나 너희 편이란다! ❤️"
+                    </p>
+                    <div class="flex justify-center gap-2 text-gray-300 text-[8px] font-bold uppercase tracking-widest">
+                        <span>Believe</span>
+                        <span>•</span>
+                        <span>Grow</span>
+                        <span>•</span>
+                        <span>Success</span>
                     </div>
                 </div>
-                <div id="qna-form-msg" class="hidden text-rose-500 text-center mt-3 text-[10px] font-bold"></div>
+                <p class="text-stone-300 text-[8px] mt-6 tracking-widest uppercase">© 2026 Grade 1 Highschool Support Project</p>
             </div>
+        </section>
 
-            <!-- QnA Tabs & List -->
-            <div class="max-w-4xl mx-auto">
-                <div class="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide" id="qna-tabs-container">
-                    <button onclick="window.setQnaFilter('전체')" class="qna-tab active bg-blue-500 text-white px-5 py-1.5 rounded-full text-xs font-bold shrink-0 shadow-sm transition-colors">전체</button>
-                    <button onclick="window.setQnaFilter('종합')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">종합</button>
-                    <button onclick="window.setQnaFilter('국어')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">국어</button>
-                    <button onclick="window.setQnaFilter('수학')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">수학</button>
-                    <button onclick="window.setQnaFilter('영어')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">영어</button>
-                    <button onclick="window.setQnaFilter('사회')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">사회</button>
-                    <button onclick="window.setQnaFilter('과학')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">과학</button>
-                    <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-5 py-1.5 rounded-full text-xs font-bold shrink-0 hover:bg-gray-50 transition-colors">한국사</button>
-                </div>
-                
-                <div id="qna-list" class="space-y-4 min-h-[300px]">
-                    <!-- Questions will be dynamically inserted here -->
-                </div>
-                <!-- QnA 페이지네이션 -->
-                <div id="qna-pagination" class="flex justify-center gap-2 mt-8 flex-wrap"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Section 7: Footer -->
-    <section id="footer" class="page-section bg-stone-50 overflow-hidden">
-        <div class="max-w-xl mx-auto w-full px-8 text-center relative">
-            <div class="bg-white p-7 md:p-10 rounded-[2rem] shadow-xl border border-stone-100 relative transition-transform hover:-translate-y-1">
-                <div class="absolute -top-3 -right-3 w-10 h-10 bg-amber-200 rounded-full opacity-30 animate-pulse"></div>
-                <div class="w-10 h-10 bg-amber-400 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-sm rotate-2">
-                    <span class="text-lg">💌</span>
-                </div>
-                <h3 class="text-amber-600 font-black mb-3 text-sm md:text-base tracking-tight uppercase">Message from 선생님</h3>
-                <p class="text-[11px] md:text-sm font-medium text-gray-600 leading-relaxed mb-6 italic">
-                    "공부가 힘겹게 느껴지는 건 네가 제대로 <strong class="text-rose-500">성장</strong>하고 있다는 증거란다. 한 번에 모든 걸 다 하려 하지 말고, 오늘 계획한 분량만이라도 꼭 지켜보자. 선생님들은 언제나 너희 편이란다! ❤️"
-                </p>
-                <div class="flex justify-center gap-3 text-gray-300 text-[8px] font-bold uppercase tracking-widest">
-                    <span>Believe</span>
-                    <span>•</span>
-                    <span>Grow</span>
-                    <span>•</span>
-                    <span>Success</span>
-                </div>
-            </div>
-            <p class="text-stone-300 text-[8px] mt-10 tracking-widest uppercase">© 2026 Grade 1 Highschool Support Project</p>
-        </div>
-    </section>
+    </div>
+    <!-- 스마트폰 컨테이너 끝 -->
 
     <!-- Scripts -->
     <script type="module">
@@ -594,7 +666,6 @@
         const db = getFirestore(app);
         
         const provider = new GoogleAuthProvider();
-        // 1차 방어: 구글 로그인 창에서 학교 도메인(@bigs.hs.kr)만 선택하도록 제한
         provider.setCustomParameters({
             hd: 'bigs.hs.kr'
         });
@@ -615,6 +686,34 @@
         let qnaCurrentPage = 1;
         const qnaItemsPerPage = 5;
 
+        // Custom Toast Helper
+        window.showToast = (message, type = 'info') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-3.5 py-2 rounded-xl shadow-lg border text-[10px] font-bold transition-all transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-1.5 w-full keep-all`;
+            
+            if (type === 'success') {
+                toast.className += ' bg-emerald-50 border-emerald-100 text-emerald-800';
+                toast.innerHTML = `🟢 ${message}`;
+            } else if (type === 'error') {
+                toast.className += ' bg-rose-50 border-rose-100 text-rose-800';
+                toast.innerHTML = `🔴 ${message}`;
+            } else {
+                toast.className += ' bg-blue-50 border-blue-100 text-blue-800';
+                toast.innerHTML = `🔵 ${message}`;
+            }
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
         // UI 업데이트 로직 분리 (로그인 상태 반영)
         const updateAuthUI = (user) => {
             const loginBtn = document.getElementById('btn-google-login');
@@ -622,7 +721,6 @@
             const authorDisplays = document.querySelectorAll('.author-display');
             const authRequiredInputs = document.querySelectorAll('.auth-required');
 
-            // 실제 구글 로그인이거나, 미리보기용 임시 닉네임이 설정된 경우 로그인 상태로 간주
             const isLoggedIn = user && (user.displayName || !user.isAnonymous);
 
             if (isLoggedIn) {
@@ -632,7 +730,7 @@
                 document.getElementById('user-display-name').textContent = user.displayName;
 
                 authorDisplays.forEach(el => {
-                    el.innerHTML = `<img src="${user.photoURL || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg'}" class="w-4 h-4 rounded-full"> ${user.displayName}`;
+                    el.innerHTML = `<img src="${user.photoURL || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg'}" class="w-3.5 h-3.5 rounded-full"> ${user.displayName}`;
                     el.classList.replace('text-gray-400', 'text-gray-700');
                 });
                 authRequiredInputs.forEach(el => {
@@ -654,45 +752,68 @@
             }
         };
 
+        // Custom Modal for Preview Mode Nickname Setup
+        const nickModal = document.getElementById('nickname-modal');
+        const nickInput = document.getElementById('nickname-input');
+        const nickError = document.getElementById('nickname-error');
+
+        const showNicknameModal = () => {
+            nickModal.classList.remove('hidden');
+            setTimeout(() => nickModal.firstElementChild.classList.replace('scale-95', 'scale-100'), 10);
+        };
+
+        const closeNicknameModal = () => {
+            nickModal.firstElementChild.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => {
+                nickModal.classList.add('hidden');
+                nickInput.value = '';
+                nickError.classList.add('hidden');
+            }, 150);
+        };
+
+        document.getElementById('btn-nickname-cancel').addEventListener('click', closeNicknameModal);
+        document.getElementById('btn-nickname-confirm').addEventListener('click', async () => {
+            const name = nickInput.value.trim();
+            if (!name) {
+                nickError.classList.remove('hidden');
+                return;
+            }
+            if (currentUser) {
+                await updateProfile(currentUser, {
+                    displayName: name,
+                    photoURL: `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(name)}`
+                });
+                updateAuthUI(currentUser);
+                closeNicknameModal();
+                window.showToast(`'${name}'님 환영합니다! 🎉`, 'success');
+            }
+        });
+
         // 구글 로그인 / 로그아웃 이벤트
         document.getElementById('btn-google-login').addEventListener('click', async () => {
             try {
-                // 실제 배포 환경: 구글 로그인 팝업 호출
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                console.warn("팝업 차단 감지됨:", error);
-                // 미리보기 환경: 팝업이 차단될 경우 테스트 계정으로 프로필 임시 업데이트
-                if (currentUser) {
-                    const testName = prompt("🚨 미리보기 화면에서는 보안 정책상 구글 로그인이 차단됩니다.\n기능 테스트를 위해 임시로 사용할 '닉네임'을 입력해주세요.\n(실제 사이트 배포 시에는 구글 로그인이 정상 작동합니다.)", "테스트 학생");
-                    if (testName) {
-                        await updateProfile(currentUser, {
-                            displayName: testName,
-                            photoURL: `https://api.dicebear.com/7.x/identicon/svg?seed=${testName}`
-                        });
-                        updateAuthUI(currentUser);
-                        alert(`'${testName}'님 환영합니다! 이제 모든 기능을 테스트할 수 있습니다.`);
-                    }
-                }
+                console.warn("구글 팝업 차단 또는 실패 감지:", error);
+                showNicknameModal();
             }
         });
 
         document.getElementById('btn-logout').addEventListener('click', async () => {
             await signOut(auth);
-            alert("로그아웃 되었습니다.");
-            // 익명 계정으로 재접속하여 글 읽기 권한 유지
+            window.showToast("로그아웃 되었습니다. 👋", "success");
             await signInAnonymously(auth);
         });
 
         // 인증 상태 감지 및 UI 업데이트
         onAuthStateChanged(auth, async (user) => {
-            // 2차 방어: 구글 로그인을 통과했더라도 학교 이메일이 아니면 즉시 강제 차단
             if (user && !user.isAnonymous) {
                 const email = user.email || "";
                 if (!email.endsWith('@bigs.hs.kr')) {
-                    alert("⚠️ 학교 공식 계정(@bigs.hs.kr)으로만 접속할 수 있습니다.\n개인 이메일은 사용이 제한되므로 로그아웃 처리됩니다.");
+                    window.showToast("⚠️ 학교 공식 계정(@bigs.hs.kr)으로만 접속할 수 있습니다.", "error");
                     await signOut(auth);
                     await signInAnonymously(auth); // 읽기 전용 상태로 복구
-                    return; // 더 이상 아래 로직을 실행하지 않고 중단
+                    return;
                 }
             }
 
@@ -706,7 +827,7 @@
             }
         });
 
-        // 캔버스 환경 초기화용 (미리보기)
+        // 초기 익명/커스텀 인증 진행
         const initAuth = async () => {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
@@ -747,7 +868,7 @@
             });
         };
 
-        // 관리자 모달
+        // 관리자 모달 제어
         window.requestDelete = (type, parentId, childId = null) => {
             deleteTarget = { type, parentId, childId };
             const modal = document.getElementById('admin-modal');
@@ -795,6 +916,7 @@
                     }
                 }
                 closeModal();
+                window.showToast("정상적으로 삭제되었습니다.", "success");
             } catch (e) {
                 console.error(e);
                 msgEl.textContent = '오류가 발생했습니다.';
@@ -807,7 +929,7 @@
         // ------------------
         window.toggleBoardLike = async (noteId) => {
             const isLoggedIn = currentUser && (currentUser.displayName || !currentUser.isAnonymous);
-            if (!isLoggedIn) { alert("로그인 후 이용 가능합니다."); return; }
+            if (!isLoggedIn) { window.showToast("로그인 후 이용 가능합니다. 🔒", "error"); return; }
             const note = boardNotesData.find(n => n.id === noteId);
             if (!note) return;
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'messages', noteId);
@@ -819,7 +941,7 @@
 
         window.toggleQnaQuestionLike = async (qId) => {
             const isLoggedIn = currentUser && (currentUser.displayName || !currentUser.isAnonymous);
-            if (!isLoggedIn) { alert("로그인 후 이용 가능합니다."); return; }
+            if (!isLoggedIn) { window.showToast("로그인 후 이용 가능합니다. 🔒", "error"); return; }
             const q = questionsData.find(q => q.id === qId);
             if (!q) return;
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'qna_questions', qId);
@@ -831,7 +953,7 @@
 
         window.toggleQnaAnswerLike = async (qId, aId) => {
             const isLoggedIn = currentUser && (currentUser.displayName || !currentUser.isAnonymous);
-            if (!isLoggedIn) { alert("로그인 후 이용 가능합니다."); return; }
+            if (!isLoggedIn) { window.showToast("로그인 후 이용 가능합니다. 🔒", "error"); return; }
             const q = questionsData.find(q => q.id === qId);
             if (!q) return;
             const aIndex = q.answers.findIndex(a => a.id === aId);
@@ -890,26 +1012,26 @@
             visibleNotes.forEach((note, idx) => {
                 const colorClass = colors[idx % colors.length];
                 const noteDiv = document.createElement('div');
-                noteDiv.className = `sticky-note ${colorClass} p-4 rounded-2xl shadow-sm border transform rotate-${idx % 2 === 0 ? '-1' : '1'} flex flex-col justify-between`;
+                noteDiv.className = `sticky-note ${colorClass} p-3.5 rounded-2xl shadow-sm border transform rotate-${idx % 2 === 0 ? '-1' : '1'} flex flex-col justify-between`;
                 
-                let imgHtml = note.imageUrl ? `<img src="${note.imageUrl}" class="w-full h-auto max-h-[120px] object-cover rounded-lg mb-2 shadow-sm bg-white/50" loading="lazy">` : '';
+                let imgHtml = note.imageUrl ? `<img src="${note.imageUrl}" class="w-full h-auto max-h-[100px] object-cover rounded-lg mb-2 shadow-sm bg-white/50" loading="lazy">` : '';
                 const isLiked = note.likedBy && currentUser && note.likedBy.includes(currentUser.uid);
                 const likeCount = note.likedBy ? note.likedBy.length : 0;
-                const authorImg = note.photoURL ? `<img src="${note.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover shadow-sm mr-1.5">` : '';
+                const authorImg = note.photoURL ? `<img src="${note.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover shadow-sm mr-1">` : '';
 
                 noteDiv.innerHTML = `
                     <div class="flex-grow flex flex-col">
                         ${imgHtml}
-                        <p class="text-[10px] md:text-xs text-gray-700 font-bold leading-relaxed break-words italic mb-2 flex-grow">"${note.content}"</p>
+                        <p class="text-[9px] sm:text-[10px] text-gray-700 font-bold leading-relaxed break-words italic mb-2 flex-grow">"${note.content}"</p>
                     </div>
-                    <div class="mt-auto border-t border-black/5 pt-2 flex justify-between items-center">
+                    <div class="mt-auto border-t border-black/5 pt-1.5 flex justify-between items-center">
                         <div class="flex items-center gap-1">
-                            <button onclick="window.toggleBoardLike('${note.id}')" class="text-[9px] flex items-center gap-1 ${isLiked ? 'text-rose-500 font-bold' : 'text-gray-400 hover:text-rose-400'} bg-white/60 px-2 py-0.5 rounded transition">
-                                ${isLiked ? '❤️' : '🤍'} ${likeCount}
+                            <button onclick="window.toggleBoardLike('${note.id}')" class="text-[8px] flex items-center gap-0.5 ${isLiked ? 'text-rose-500 font-bold' : 'text-gray-400 hover:text-rose-400'} bg-white/60 px-1.5 py-0.5 rounded transition">
+                                ${isLiked ? '❤️' : '🤍'}${likeCount}
                             </button>
-                            <button onclick="window.requestDelete('note', '${note.id}')" class="text-[9px] text-gray-400 hover:text-rose-600 bg-white/60 px-1.5 py-0.5 rounded transition">🗑️</button>
+                            <button onclick="window.requestDelete('note', '${note.id}')" class="text-[8px] text-gray-400 hover:text-rose-600 bg-white/60 px-1 py-0.5 rounded transition">🗑️</button>
                         </div>
-                        <span class="font-black text-gray-600 text-[9px] bg-white/60 px-2 py-0.5 rounded flex items-center">${authorImg}${note.name}</span>
+                        <span class="font-black text-gray-600 text-[8px] bg-white/60 px-1.5 py-0.5 rounded flex items-center truncate max-w-[60px]">${authorImg}${note.name}</span>
                     </div>
                 `;
                 boardEl.appendChild(noteDiv);
@@ -927,8 +1049,8 @@
                 const btn = document.createElement('button');
                 btn.textContent = i;
                 btn.className = i === boardCurrentPage 
-                    ? 'w-8 h-8 rounded-full bg-rose-400 text-white text-xs font-bold shadow-md transform scale-110 transition-all'
-                    : 'w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-600 text-xs font-bold hover:bg-gray-50 transition-all';
+                    ? 'w-6 h-6 rounded-full bg-rose-400 text-white text-[9px] font-bold shadow-md transform scale-110 transition-all'
+                    : 'w-6 h-6 rounded-full bg-white border border-gray-200 text-gray-600 text-[9px] font-bold hover:bg-gray-50 transition-all';
                 btn.addEventListener('click', () => {
                     boardCurrentPage = i;
                     renderNotes();
@@ -952,8 +1074,7 @@
             const msgEl = document.getElementById('form-msg');
             
             if (!content) {
-                msgEl.textContent = "응원 내용을 입력해주세요! 😊";
-                msgEl.classList.remove('hidden');
+                window.showToast("응원 메시지를 적어주세요! 😊", "error");
                 return;
             }
             
@@ -978,6 +1099,7 @@
                 fileInput.value = '';
                 document.getElementById('note-file-name').textContent = '선택된 파일 없음';
                 msgEl.classList.add('hidden');
+                window.showToast("응원이 등록되었습니다! 💖", "success");
             } catch (e) {
                 msgEl.textContent = "오류 발생! 다시 시도해 주세요.";
             }
@@ -1017,7 +1139,7 @@
             const filtered = currentQnaFilter === '전체' ? questionsData : questionsData.filter(q => q.category === currentQnaFilter);
             
             if (filtered.length === 0) {
-                listEl.innerHTML = '<div class="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-200"><p class="text-gray-400 text-sm font-bold mb-1">등록된 질문이 없습니다.</p><p class="text-[10px] text-gray-300">궁금한 점을 가장 먼저 물어보세요!</p></div>';
+                listEl.innerHTML = '<div class="text-center py-8 bg-white rounded-xl border border-dashed border-gray-200"><p class="text-gray-400 text-[11px] font-bold mb-1">등록된 질문이 없습니다.</p></div>';
                 paginationEl.innerHTML = '';
                 return;
             }
@@ -1032,81 +1154,80 @@
             listEl.innerHTML = visibleQnA.map(q => {
                 const qIsLiked = q.likedBy && currentUser && q.likedBy.includes(currentUser.uid);
                 const qLikeCount = q.likedBy ? q.likedBy.length : 0;
-                const authorImg = q.photoURL ? `<img src="${q.photoURL}" class="w-4 h-4 rounded-full">` : '';
+                const authorImg = q.photoURL ? `<img src="${q.photoURL}" class="w-3.5 h-3.5 rounded-full inline-block">` : '';
 
                 const answersHtml = (q.answers || []).map(a => {
                     const aIsLiked = a.likedBy && currentUser && a.likedBy.includes(currentUser.uid);
                     const aLikeCount = a.likedBy ? a.likedBy.length : 0;
-                    const aAuthorImg = a.photoURL ? `<img src="${a.photoURL}" class="w-3.5 h-3.5 rounded-full inline-block">` : '';
+                    const aAuthorImg = a.photoURL ? `<img src="${a.photoURL}" class="w-3 h-3 rounded-full inline-block mr-1">` : '';
 
                     return `
-                    <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100 flex flex-col gap-2 relative group">
+                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100 flex flex-col gap-1.5 relative">
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-bold text-blue-700 bg-blue-100/50 px-2 py-0.5 rounded flex items-center gap-1.5">${aAuthorImg} ${a.studentId ? a.studentId + ' ' : ''}${a.name}</span>
-                            <div class="flex items-center gap-2">
-                                <button onclick="window.toggleQnaAnswerLike('${q.id}', '${a.id}')" class="text-[9px] flex items-center gap-1 ${aIsLiked ? 'text-rose-500 font-bold' : 'text-gray-400 hover:text-rose-400'} bg-white px-1.5 py-0.5 rounded border border-gray-100 transition shadow-sm">
+                            <span class="text-[9px] font-bold text-blue-700 bg-blue-100/50 px-1.5 py-0.5 rounded flex items-center">${aAuthorImg} ${a.studentId ? a.studentId + ' ' : ''}${a.name}</span>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="window.toggleQnaAnswerLike('${q.id}', '${a.id}')" class="text-[8px] flex items-center gap-0.5 ${aIsLiked ? 'text-rose-500 font-bold' : 'text-gray-400 hover:text-rose-400'} bg-white px-1 py-0.5 rounded border border-gray-100 shadow-xs">
                                     ${aIsLiked ? '❤️' : '🤍'} ${aLikeCount}
                                 </button>
-                                <button onclick="window.requestDelete('answer', '${q.id}', '${a.id}')" class="text-gray-300 hover:text-rose-400 text-[10px] transition font-bold">삭제</button>
+                                <button onclick="window.requestDelete('answer', '${q.id}', '${a.id}')" class="text-gray-300 hover:text-rose-400 text-[8px] transition font-bold">삭제</button>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-700 break-words leading-relaxed">${a.content}</p>
-                        ${a.imageUrl ? `<img src="${a.imageUrl}" class="w-full max-w-[300px] h-auto rounded-lg object-contain shadow-sm border border-gray-100" loading="lazy">` : ''}
+                        <p class="text-[10px] text-gray-700 break-words leading-relaxed">${a.content}</p>
+                        ${a.imageUrl ? `<img src="${a.imageUrl}" class="w-full max-w-[200px] h-auto rounded-lg object-contain shadow-sm border border-gray-150" loading="lazy">` : ''}
                     </div>
                     `;
                 }).join('');
 
-                // 답변 작성 폼 (로그인 시에만 활성화)
                 const isLoggedIn = currentUser && (currentUser.displayName || !currentUser.isAnonymous);
                 const answerFormHtml = isLoggedIn ? `
-                    <div class="flex flex-col gap-2 bg-white border border-gray-200 p-3.5 rounded-2xl shadow-sm">
-                        <div class="flex gap-2">
-                            <input type="text" id="ans-sid-${q.id}" placeholder="학번(선택)" class="w-1/3 border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-blue-200 bg-gray-50">
-                            <div class="w-2/3 border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] bg-gray-100 text-gray-600 font-bold flex items-center gap-2">
-                                <img src="${currentUser.photoURL || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg'}" class="w-4 h-4 rounded-full"> ${currentUser.displayName}
+                    <div class="flex flex-col gap-1.5 bg-white border border-gray-200 p-2.5 rounded-xl shadow-xs">
+                        <div class="flex gap-1.5">
+                            <input type="text" id="ans-sid-${q.id}" placeholder="학번(선택)" class="w-1/3 border border-gray-200 rounded px-2 py-1 text-[9px] outline-none bg-gray-50">
+                            <div class="w-2/3 border border-gray-200 rounded px-2 py-1 text-[9px] bg-gray-100 text-gray-600 font-bold flex items-center gap-1">
+                                <img src="${currentUser.photoURL || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg'}" class="w-3 h-3 rounded-full"> ${currentUser.displayName}
                             </div>
                         </div>
-                        <textarea id="ans-content-${q.id}" placeholder="친절한 답변을 남겨주세요..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs outline-none resize-none h-14 focus:ring-1 focus:ring-blue-200 bg-gray-50"></textarea>
-                        <div class="flex items-center gap-2 justify-between mt-1">
-                            <div class="flex items-center gap-2 w-2/3">
-                                <label for="ans-image-${q.id}" class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2 py-1.5 rounded cursor-pointer hover:bg-gray-200">📷 사진</label>
+                        <textarea id="ans-content-${q.id}" placeholder="친절한 답변을 남겨주세요..." class="w-full border border-gray-200 rounded px-2 py-1.5 text-[10px] outline-none resize-none h-11 bg-gray-50 focus:ring-1 focus:ring-blue-100"></textarea>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1 w-2/3">
+                                <label for="ans-image-${q.id}" class="text-[8px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded cursor-pointer">📷 사진</label>
                                 <input type="file" id="ans-image-${q.id}" accept="image/*" class="hidden" onchange="document.getElementById('ans-fname-${q.id}').textContent = this.files[0] ? this.files[0].name : '없음'">
-                                <span id="ans-fname-${q.id}" class="text-[8px] text-gray-400 truncate max-w-[80px]">선택 안됨</span>
+                                <span id="ans-fname-${q.id}" class="text-[8px] text-gray-400 truncate max-w-[60px]">선택 안됨</span>
                             </div>
-                            <button onclick="window.submitAnswer('${q.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 text-[10px] rounded-lg font-bold shadow-sm transition">답변 등록</button>
+                            <button onclick="window.submitAnswer('${q.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-[9px] rounded font-bold shadow-sm transition">답변 등록</button>
                         </div>
                     </div>
                 ` : `
-                    <div class="text-center py-4 bg-gray-50 rounded-xl border border-gray-200">
-                        <p class="text-[10px] font-bold text-gray-500">답변을 작성하려면 위쪽의 <b class="text-gray-700">구글 로그인</b>을 진행해주세요.</p>
+                    <div class="text-center py-2 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-[8px] font-bold text-gray-500">답변을 작성하려면 먼저 로그인해 주세요.</p>
                     </div>
                 `;
 
                 return `
-                    <div class="bg-white rounded-[1.5rem] p-5 md:p-7 border border-blue-100 shadow-sm flex flex-col gap-3 transition hover:shadow-md">
+                    <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm flex flex-col gap-2.5 hover:shadow-md transition">
                         <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-blue-500 text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm">${q.category}</span>
-                                <span class="text-xs font-bold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full flex items-center gap-1.5">${authorImg} ${q.studentId ? q.studentId + ' ' : ''}${q.name}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="bg-blue-500 text-white text-[9px] px-2 py-0.5 rounded-full font-bold shadow-xs">${q.category}</span>
+                                <span class="text-[10px] font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full flex items-center gap-1">${authorImg}${q.studentId ? q.studentId + ' ' : ''}${q.name}</span>
                             </div>
-                            <button onclick="window.requestDelete('question', '${q.id}')" class="text-gray-300 hover:text-rose-500 text-[10px] font-bold px-2 py-1 transition">삭제</button>
+                            <button onclick="window.requestDelete('question', '${q.id}')" class="text-gray-300 hover:text-rose-500 text-[9px] font-bold px-1 transition">삭제</button>
                         </div>
                         
-                        <div class="bg-blue-50/30 rounded-xl p-4 my-1 border border-blue-50">
-                            <p class="text-sm md:text-base text-gray-800 break-words font-medium leading-relaxed">${q.content}</p>
-                            ${q.imageUrl ? `<img src="${q.imageUrl}" class="max-w-full max-h-[300px] h-auto rounded-xl object-contain mt-3 shadow-sm border border-gray-100" loading="lazy">` : ''}
-                            <div class="mt-3 flex">
-                                <button onclick="window.toggleQnaQuestionLike('${q.id}')" class="text-[10px] flex items-center gap-1 ${qIsLiked ? 'text-rose-500' : 'text-gray-500 hover:text-rose-400'} bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 transition shadow-sm font-bold">
+                        <div class="bg-blue-50/20 rounded-xl p-3 my-0.5 border border-blue-50/50">
+                            <p class="text-[11px] text-gray-800 break-words font-medium leading-relaxed">${q.content}</p>
+                            ${q.imageUrl ? `<img src="${q.imageUrl}" class="max-w-full max-h-[180px] h-auto rounded-lg object-contain mt-2 shadow-xs border border-gray-150" loading="lazy">` : ''}
+                            <div class="mt-2.5 flex">
+                                <button onclick="window.toggleQnaQuestionLike('${q.id}')" class="text-[9px] flex items-center gap-0.5 ${qIsLiked ? 'text-rose-500' : 'text-gray-500 hover:text-rose-400'} bg-white px-2 py-1 rounded-md border border-gray-150 transition font-bold shadow-xs">
                                     ${qIsLiked ? '❤️' : '🤍'} 유용해요 ${qLikeCount}
                                 </button>
                             </div>
                         </div>
                         
-                        <div class="mt-2 border-t border-gray-100 pt-4">
-                            <h5 class="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1">
-                                💬 답변 <span class="bg-blue-100 text-blue-600 px-1.5 rounded-full text-[9px]">${q.answers?.length || 0}</span>
+                        <div class="mt-1 border-t border-gray-100 pt-2.5">
+                            <h5 class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1">
+                                💬 답변 <span class="bg-blue-100 text-blue-600 px-1 rounded-full text-[8px]">${q.answers?.length || 0}</span>
                             </h5>
-                            <div class="space-y-2.5 mb-4">
+                            <div class="space-y-2 mb-3">
                                 ${answersHtml}
                             </div>
                             ${answerFormHtml}
@@ -1127,8 +1248,8 @@
                 const btn = document.createElement('button');
                 btn.textContent = i;
                 btn.className = i === qnaCurrentPage 
-                    ? 'w-8 h-8 rounded-full bg-blue-500 text-white text-xs font-bold shadow-md transform scale-110 transition-all'
-                    : 'w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-600 text-xs font-bold hover:bg-gray-50 transition-all';
+                    ? 'w-6 h-6 rounded-full bg-blue-500 text-white text-[9px] font-bold shadow-md transform scale-110 transition-all'
+                    : 'w-6 h-6 rounded-full bg-white border border-gray-200 text-gray-600 text-[9px] font-bold hover:bg-gray-50 transition-all';
                 btn.addEventListener('click', () => {
                     qnaCurrentPage = i;
                     renderQnA();
@@ -1154,8 +1275,7 @@
             const msgEl = document.getElementById('qna-form-msg');
             
             if (!content) {
-                msgEl.textContent = '질문 내용을 입력해주세요! 😥';
-                msgEl.classList.remove('hidden');
+                window.showToast('질문 내용을 적어주세요! 😥', 'error');
                 return;
             }
             
@@ -1184,6 +1304,7 @@
                 fileInput.value = '';
                 document.getElementById('qna-file-name').textContent = '선택된 파일 없음';
                 msgEl.classList.add('hidden');
+                window.showToast("질문이 잘 등록되었습니다! 🙋‍♂️", "success");
             } catch (e) {
                 msgEl.textContent = '오류 발생! 다시 시도해 주세요.';
             }
@@ -1198,7 +1319,7 @@
             const fileInput = document.getElementById(`ans-image-${qId}`);
             
             if (!content) {
-                alert("답변 내용을 입력해주세요!"); 
+                window.showToast("답변 내용을 입력해주세요!", "error"); 
                 return;
             }
             
@@ -1227,9 +1348,10 @@
                 document.getElementById(`ans-sid-${qId}`).value = '';
                 document.getElementById(`ans-content-${qId}`).value = '';
                 fileInput.value = '';
+                window.showToast("답변이 정상 등록되었습니다. 👍", "success");
             } catch (e) {
                 console.error(e);
-                alert("답변 등록 중 오류가 발생했습니다.");
+                window.showToast("오류가 발생했습니다.", "error");
             }
         };
 
@@ -1238,25 +1360,44 @@
     <!-- UI/UX Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Navigation Dot Control
+            // Navigation Category Control
             const sections = document.querySelectorAll('.page-section');
-            const navDots = document.querySelectorAll('.nav-dot');
+            const subNavBtns = document.querySelectorAll('.sub-nav-btn');
+            
+            // 섹션별 네비게이션 자동 활성화 & 카테고리 자동 스크롤
             const updateActiveDot = () => {
-                let current = '';
+                let current = 'hero';
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 300) current = section.getAttribute('id');
+                    const sectionTop = section.offsetTop - 110; // 헤더 바 2중(auth + category) 오프셋 계산
+                    if (window.pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
                 });
-                navDots.forEach(dot => {
-                    dot.classList.remove('active');
-                    if (dot.getAttribute('data-target') === current) dot.classList.add('active');
+                
+                subNavBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-target') === current) {
+                        btn.classList.add('active');
+                        // 가로 스크롤 네비게이션 바 자동 이동
+                        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
                 });
             };
+            
             window.addEventListener('scroll', updateActiveDot);
-            navDots.forEach(dot => {
-                dot.addEventListener('click', () => {
-                    const targetId = dot.getAttribute('data-target');
-                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+
+            // 네비게이션 버튼 터치 이동
+            subNavBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    
+                    // 모바일 프레임 내부 상단바 간격(92px) 보정 후 스크롤링
+                    const targetOffset = targetEl.offsetTop - 90;
+                    window.scrollTo({
+                        top: targetOffset,
+                        behavior: 'smooth'
+                    });
                 });
             });
 
@@ -1332,36 +1473,39 @@
             const gridContainer = document.getElementById('subject-grid');
             subjectsData.forEach(subject => {
                 const card = document.createElement('div');
-                card.className = `subject-card bg-white rounded-[2rem] p-5 md:p-6 border border-gray-100 shadow-sm flex flex-col justify-between transition-transform active:scale-95`;
+                card.className = `subject-card bg-white rounded-[1.5rem] p-4 border border-gray-100 shadow-sm flex flex-col justify-between transition-transform active:scale-95`;
                 
-                let scopeHtml = subject.scope.map(item => `<li class="flex items-start gap-2.5 mb-2"><span class="text-[10px] md:text-xs mt-[3px] text-gray-300">▶</span> <span class="text-gray-700 text-xs md:text-sm font-medium leading-relaxed">${item}</span></li>`).join('');
+                let scopeHtml = subject.scope.map(item => `<li class="flex items-start gap-1.5 mb-1.5"><span class="text-[8px] mt-[5px] text-gray-300">▶</span> <span class="text-gray-700 text-[10px] sm:text-xs font-medium leading-relaxed">${item}</span></li>`).join('');
                 
                 card.innerHTML = `
                     <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="text-2xl md:text-3xl leading-none flex items-center">${subject.icon}</span>
-                                <h3 class="text-lg md:text-xl font-bold text-gray-800 leading-none">${subject.name}</h3>
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl leading-none flex items-center">${subject.icon}</span>
+                                <h3 class="text-sm font-bold text-gray-800 leading-none">${subject.name}</h3>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
-                                <span class="chevron transition-transform text-[10px]">▼</span>
+                            <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                                <span class="chevron transition-transform text-[8px]">▼</span>
                             </div>
                         </div>
-                        <div class="text-xs md:text-sm text-gray-500 line-clamp-2 preview-text font-medium leading-relaxed mb-2">${subject.method}</div>
+                        <div class="text-[10px] text-gray-400 line-clamp-2 preview-text font-medium leading-relaxed mb-1">${subject.method}</div>
                         <div class="subject-content text-sm">
-                            <div class="${subject.color} rounded-2xl p-4 md:p-5 mb-5 border ${subject.borderColor}">
-                                <h4 class="font-black ${subject.textColor} mb-3 text-[11px] md:text-xs uppercase tracking-wider">Exam Range</h4>
+                            <div class="${subject.color} rounded-xl p-3.5 mb-4 border ${subject.borderColor}">
+                                <h4 class="font-black ${subject.textColor} mb-2 text-[9px] uppercase tracking-wider">Exam Range</h4>
                                 <ul class="">${scopeHtml}</ul>
                             </div>
                             <div>
-                                <h4 class="font-black text-gray-800 mb-3 text-[11px] md:text-xs uppercase tracking-wider">Secret Strategy</h4>
-                                <p class="text-gray-700 text-xs md:text-sm p-4 md:p-5 rounded-xl bg-gray-50/50 border border-gray-100 font-medium leading-relaxed">${subject.method}</p>
+                                <h4 class="font-black text-gray-800 mb-2 text-[9px] uppercase tracking-wider">Secret Strategy</h4>
+                                <p class="text-gray-700 text-[10px] p-3 rounded-lg bg-gray-50/50 border border-gray-100 font-medium leading-relaxed">${subject.method}</p>
                             </div>
                         </div>
                     </div>
                 `;
                 
-                card.addEventListener('click', function() {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.subject-content')) {
+                        return; // 내부 텍스트 조작 시 아코디언 접히지 않도록 방어
+                    }
                     const isActive = this.classList.contains('active');
                     document.querySelectorAll('.subject-card').forEach(c => {
                         c.classList.remove('active');
@@ -1403,7 +1547,7 @@
                                 suggestMin: 0,
                                 suggestMax: 100,
                                 ticks: { display: false },
-                                pointLabels: { font: { size: 10, family: "'Noto Sans KR'", weight: '600' } }
+                                pointLabels: { font: { size: 9, family: "'Noto Sans KR'", weight: '600' } }
                             }
                         },
                         plugins: { legend: { display: false } }
