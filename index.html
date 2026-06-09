@@ -620,7 +620,7 @@
                         <button onclick="window.setQnaFilter('사회')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">사회</button>
                         <button onclick="window.setQnaFilter('과학')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">과학</button>
                         <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">한국사</button>
-                        <button onclick="window.setQnaFilter('정보')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">정보</button>
+                        <button onclick="window.setQnaFilter('한국사')" class="qna-tab bg-white border border-gray-200 text-gray-600 px-4 py-1 rounded-full text-[10px] font-bold shrink-0 hover:bg-gray-50 transition-colors">정보</button>
                     </div>
                     
                     <div id="qna-list" class="space-y-3.5 min-h-[180px]"></div>
@@ -1414,7 +1414,7 @@
             });
 
             // D-Day Logic
-            const examStartDate = new Date('2026-07-01T00:00:00');
+            const examStartDate = new Date('2026-04-27T00:00:00');
             const diffDays = Math.ceil((examStartDate - new Date()) / (1000 * 60 * 60 * 24));
             const displayEl = document.getElementById('d-day-display');
             if(diffDays > 0) displayEl.innerText = `D-${diffDays}`;
@@ -1478,13 +1478,6 @@
                         '기범T : 배움책 주제 4~7'
                     ],
                     method: '무작정 암기보다 시대순 연표를 먼저 그리세요. 큰 흐름(인과관계)을 먼저 파악한 뒤 세부 사건을 살을 붙이듯 암기하는 것이 장기 기억에 훨씬 효과적입니다. 배움책 주제 1~3의 질문들에 대해 1분 동안 막힘없이 설명할 수 있도록 합니다.'
-                }
-                {
-                    id: 'informatics', name: '정보', icon: '🖥️', color: 'bg-stone-100', textColor: 'text-stone-700', borderColor: 'border-stone-200',
-                    scope: [
-                        '교과서 p.66~p.81, p.118~p.141 / 유인물'
-                    ],
-                    method: '교과서의 개념을 꼼꼼하게 확인하고 프로그램 코드의 의미와 원리를 숙지하세요.'
                 }
             ];
 
